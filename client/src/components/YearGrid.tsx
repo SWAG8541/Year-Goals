@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { eachDayOfInterval, format, isToday, getDayOfYear, getMonth } from 'date-fns';
+import { eachDayOfInterval, format, isToday, getDayOfYear, getMonth, isBefore, startOfDay } from 'date-fns';
 import { useYearProgress } from '@/hooks/useYearProgress';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
+import { Target, TrendingUp, Calendar } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -19,7 +21,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 
-// Indian Festivals 2026 (Approximate/Major dates)
 const INDIAN_FESTIVALS_2026: Record<string, string> = {
   '2026-01-14': 'Makar Sankranti / Pongal',
   '2026-01-26': 'Republic Day',
@@ -41,32 +42,57 @@ const INDIAN_FESTIVALS_2026: Record<string, string> = {
   '2026-12-25': 'Christmas',
 };
 
-// Pastel/Light colors for 12 months
 const MONTH_COLORS = [
-  'bg-red-100/80 border-red-200 text-red-900',       // Jan
-  'bg-orange-100/80 border-orange-200 text-orange-900', // Feb
-  'bg-amber-100/80 border-amber-200 text-amber-900',   // Mar
-  'bg-yellow-100/80 border-yellow-200 text-yellow-900', // Apr
-  'bg-lime-100/80 border-lime-200 text-lime-900',     // May
-  'bg-green-100/80 border-green-200 text-green-900',   // Jun
-  'bg-emerald-100/80 border-emerald-200 text-emerald-900', // Jul
-  'bg-teal-100/80 border-teal-200 text-teal-900',     // Aug
-  'bg-cyan-100/80 border-cyan-200 text-cyan-900',     // Sep
-  'bg-sky-100/80 border-sky-200 text-sky-900',       // Oct
-  'bg-blue-100/80 border-blue-200 text-blue-900',     // Nov
-  'bg-indigo-100/80 border-indigo-200 text-indigo-900', // Dec
+  'bg-red-100/80 border-red-200 text-red-900',
+  'bg-orange-100/80 border-orange-200 text-orange-900',
+  'bg-amber-100/80 border-amber-200 text-amber-900',
+  'bg-yellow-100/80 border-yellow-200 text-yellow-900',
+  'bg-lime-100/80 border-lime-200 text-lime-900',
+  'bg-green-100/80 border-green-200 text-green-900',
+  'bg-emerald-100/80 border-emerald-200 text-emerald-900',
+  'bg-teal-100/80 border-teal-200 text-teal-900',
+  'bg-cyan-100/80 border-cyan-200 text-cyan-900',
+  'bg-sky-100/80 border-sky-200 text-sky-900',
+  'bg-blue-100/80 border-blue-200 text-blue-900',
+  'bg-indigo-100/80 border-indigo-200 text-indigo-900',
 ];
 
 export function YearGrid() {
   const { completedDays, toggleDay, setNote, mainGoal, setMainGoal } = useYearProgress();
   const [editingDate, setEditingDate] = useState<string | null>(null);
   const [tempNote, setTempNote] = useState("");
+  const [editingGoal, setEditingGoal] = useState(false);
+  const [tempGoal, setTempGoal] = useState("");
+  const { toast } = useToast();
 
   const start = new Date(2026, 0, 1);
   const end = new Date(2026, 11, 31);
   const days = eachDayOfInterval({ start, end });
 
-  const handleDayClick = (dateKey: string) => {
+  const today = startOfDay(new Date());
+  const completedCount = Object.values(completedDays).filter(d => d.completed).length;
+  const progressPercent = ((completedCount / days.length) * 100).toFixed(1);
+
+  const handleDayClick = (day: Date, dateKey: string) => {
+    const dayStart = startOfDay(day);
+    
+    if (!isToday(day) && !completedDays[dateKey]?.completed) {
+      if (isBefore(dayStart, today)) {
+        toast({
+          title: "Cannot mark past dates",
+          description: "You can only mark today's date as complete.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Cannot mark future dates",
+          description: "You can only mark today's date as complete.",
+          variant: "destructive",
+        });
+      }
+      return;
+    }
+    
     toggleDay(dateKey);
   };
 
@@ -83,27 +109,63 @@ export function YearGrid() {
     }
   };
 
+  const handleEditGoal = () => {
+    setTempGoal(mainGoal);
+    setEditingGoal(true);
+  };
+
+  const saveGoal = () => {
+    setMainGoal(tempGoal);
+    setEditingGoal(false);
+  };
+
   return (
     <div className="w-full max-w-[1400px] mx-auto p-4 font-mono select-none">
-      <header className="mb-8 text-center">
-        <h1 className="text-4xl font-bold mb-4">2026</h1>
-        <input
-          type="text"
-          value={mainGoal}
-          onChange={(e) => setMainGoal(e.target.value)}
-          placeholder="MY GOAL FOR 2026..."
-          className="w-full max-w-lg text-center bg-transparent border-b border-dashed border-primary/40 py-1 text-lg focus:outline-none focus:border-primary uppercase tracking-widest placeholder:text-muted-foreground/40"
-        />
+      {/* Goal Display Banner */}
+      <div className="mb-8 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 rounded-lg p-6">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-primary/20 rounded-full">
+              <Target className="w-8 h-8 text-primary" />
+            </div>
+            <div className="text-center md:text-left">
+              <p className="text-xs uppercase tracking-widest text-muted-foreground mb-1">My 2026 Goal</p>
+              {mainGoal ? (
+                <h2 className="text-xl md:text-2xl font-bold text-foreground">{mainGoal}</h2>
+              ) : (
+                <p className="text-lg text-muted-foreground italic">No goal set yet...</p>
+              )}
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-6">
+            <div className="text-center">
+              <div className="flex items-center gap-2 text-primary">
+                <TrendingUp className="w-5 h-5" />
+                <span className="text-2xl font-bold">{progressPercent}%</span>
+              </div>
+              <p className="text-xs text-muted-foreground">Progress</p>
+            </div>
+            <div className="text-center">
+              <div className="flex items-center gap-2 text-primary">
+                <Calendar className="w-5 h-5" />
+                <span className="text-2xl font-bold">{completedCount}/{days.length}</span>
+              </div>
+              <p className="text-xs text-muted-foreground">Days Done</p>
+            </div>
+            <Button variant="outline" size="sm" onClick={handleEditGoal}>
+              {mainGoal ? 'Edit Goal' : 'Set Goal'}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <header className="mb-6 text-center">
+        <h1 className="text-4xl font-bold mb-2">2026</h1>
+        <p className="text-sm text-muted-foreground">Click today's box to mark it complete</p>
       </header>
 
       <div className="flex justify-center">
-        {/* Adjusted grid columns to fit 365 nicely. 
-            Common layouts: 
-            - 1 column (list)
-            - 7 columns (calendar weeks)
-            - ~20-30 columns for "Year in Pixels" look. 
-            Let's try to fit it nicely on screen. 
-        */}
         <div className="grid grid-cols-10 sm:grid-cols-15 md:grid-cols-20 lg:grid-cols-[repeat(25,minmax(0,1fr))] xl:grid-cols-[repeat(30,minmax(0,1fr))] gap-1.5">
           {days.map((day) => {
             const dateKey = format(day, 'yyyy-MM-dd');
@@ -115,22 +177,25 @@ export function YearGrid() {
             const monthColorClass = MONTH_COLORS[monthIndex];
             const festival = INDIAN_FESTIVALS_2026[dateKey];
             const hasNote = !!status?.note;
+            const isPast = isBefore(startOfDay(day), today) && !isTodayDate;
+            const isFuture = !isBefore(startOfDay(day), today) && !isTodayDate;
+            const canMark = isTodayDate || isCompleted;
 
             return (
               <TooltipProvider key={dateKey} delayDuration={0}>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div
-                      onClick={() => handleDayClick(dateKey)}
+                      onClick={() => handleDayClick(day, dateKey)}
                       onContextMenu={(e) => handleRightClick(e, dateKey)}
                       className={cn(
-                        "aspect-square relative flex items-center justify-center text-[10px] sm:text-xs cursor-pointer hover:brightness-95 transition-all border",
-                        monthColorClass, // Apply month-specific background color
-                        isTodayDate && "ring-2 ring-black/50 ring-offset-1 z-10",
-                        hasNote && !isCompleted && "ring-1 ring-inset ring-black/10"
+                        "aspect-square relative flex items-center justify-center text-[10px] sm:text-xs transition-all border",
+                        monthColorClass,
+                        isTodayDate && "ring-2 ring-primary ring-offset-1 z-10",
+                        hasNote && !isCompleted && "ring-1 ring-inset ring-black/10",
+                        canMark ? "cursor-pointer hover:brightness-95" : "cursor-not-allowed opacity-70"
                       )}
                     >
-                      {/* Day of Year (1-365) */}
                       <span className={cn(
                         "font-medium opacity-60",
                         isCompleted && "opacity-30"
@@ -138,7 +203,6 @@ export function YearGrid() {
                         {dayOfYear}
                       </span>
 
-                      {/* Diagonal Line for Completed */}
                       {isCompleted && (
                         <svg 
                           className="absolute inset-0 w-full h-full text-black/60 pointer-events-none" 
@@ -156,7 +220,6 @@ export function YearGrid() {
                         </svg>
                       )}
                       
-                      {/* Festival Dot Indicator (Subtle) */}
                       {festival && (
                         <div className="absolute top-0.5 right-0.5 w-1 h-1 rounded-full bg-red-500/70" />
                       )}
@@ -180,7 +243,7 @@ export function YearGrid() {
                     )}
                     
                     <div className="mt-2 text-[10px] text-muted-foreground/60 border-t pt-1">
-                      Right-click to edit note
+                      {isTodayDate ? "Click to mark complete" : isCompleted ? "Already completed" : isPast ? "Past date (locked)" : "Future date (locked)"}
                     </div>
                   </TooltipContent>
                 </Tooltip>
@@ -190,6 +253,7 @@ export function YearGrid() {
         </div>
       </div>
 
+      {/* Note Dialog */}
       <Dialog open={!!editingDate} onOpenChange={(open) => !open && setEditingDate(null)}>
         <DialogContent>
           <DialogHeader>
@@ -207,12 +271,12 @@ export function YearGrid() {
             </DialogTitle>
           </DialogHeader>
           <div className="py-2">
-            <Label htmlFor="note" className="mb-2 block text-xs uppercase tracking-wider text-muted-foreground">Goal / Note</Label>
+            <Label htmlFor="note" className="mb-2 block text-xs uppercase tracking-wider text-muted-foreground">Daily Note</Label>
             <Textarea
               id="note"
               value={tempNote}
               onChange={(e) => setTempNote(e.target.value)}
-              placeholder="Record your progress..."
+              placeholder="What did you accomplish today?"
               className="font-mono"
             />
           </div>
@@ -222,44 +286,45 @@ export function YearGrid() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Goal Edit Dialog */}
+      <Dialog open={editingGoal} onOpenChange={(open) => !open && setEditingGoal(false)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Target className="w-5 h-5 text-primary" />
+              Set Your 2026 Goal
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <Label htmlFor="goal" className="mb-2 block text-xs uppercase tracking-wider text-muted-foreground">
+              What do you want to achieve?
+            </Label>
+            <Textarea
+              id="goal"
+              value={tempGoal}
+              onChange={(e) => setTempGoal(e.target.value)}
+              placeholder="e.g., Exercise every day, Learn a new language, Read 50 books..."
+              className="font-mono min-h-[100px]"
+            />
+            <p className="mt-2 text-xs text-muted-foreground">
+              This goal will be visible at the top of your tracker to keep you motivated.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingGoal(false)}>Cancel</Button>
+            <Button onClick={saveGoal}>Save Goal</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       
+      {/* Month Legend */}
       <div className="mt-8 flex flex-wrap justify-center gap-4 text-xs text-muted-foreground">
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-red-100 border border-red-200"></div> Jan
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-orange-100 border border-orange-200"></div> Feb
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-amber-100 border border-amber-200"></div> Mar
-        </div>
-         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-yellow-100 border border-yellow-200"></div> Apr
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-lime-100 border border-lime-200"></div> May
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-green-100 border border-green-200"></div> Jun
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-emerald-100 border border-emerald-200"></div> Jul
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-teal-100 border border-teal-200"></div> Aug
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-cyan-100 border border-cyan-200"></div> Sep
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-sky-100 border border-sky-200"></div> Oct
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-blue-100 border border-blue-200"></div> Nov
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-indigo-100 border border-indigo-200"></div> Dec
-        </div>
+        {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map((month, i) => (
+          <div key={month} className="flex items-center gap-2">
+            <div className={cn("w-4 h-4 border", MONTH_COLORS[i])}></div> {month}
+          </div>
+        ))}
       </div>
     </div>
   );
