@@ -1,54 +1,88 @@
-import { useState, useEffect } from 'react';
-
-const STORAGE_KEY = 'year_tracker_2026';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
+import type { CalendarDay, UserGoal } from '@shared/schema';
 
 export interface DayStatus {
-  date: string; // ISO date string YYYY-MM-DD
+  date: string;
   completed: boolean;
   note?: string;
 }
 
 export function useYearProgress() {
-  const [completedDays, setCompletedDays] = useState<Record<string, DayStatus>>({});
-  const [mainGoal, setMainGoal] = useState<string>("");
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        setCompletedDays(parsed.completedDays || {});
-        setMainGoal(parsed.mainGoal || "");
-      } catch (e) {
-        console.error("Failed to load progress", e);
-      }
-    }
-  }, []);
+  // Fetch all calendar days
+  const { data: calendarDays = [] } = useQuery<CalendarDay[]>({
+    queryKey: ['/api/calendar-days'],
+  });
 
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ completedDays, mainGoal }));
-  }, [completedDays, mainGoal]);
+  // Fetch user goal
+  const { data: userGoalData } = useQuery<UserGoal>({
+    queryKey: ['/api/user-goal'],
+  });
 
-  const toggleDay = (date: string) => {
-    setCompletedDays(prev => {
-      const current = prev[date];
+  // Convert API data to Record format for easier lookup
+  const completedDays: Record<string, DayStatus> = calendarDays.reduce((acc, day) => {
+    acc[day.date] = {
+      date: day.date,
+      completed: day.completed,
+      note: day.note || undefined,
+    };
+    return acc;
+  }, {} as Record<string, DayStatus>);
+
+  const mainGoal = userGoalData?.goal || "";
+
+  // Toggle day mutation
+  const toggleDayMutation = useMutation({
+    mutationFn: async (date: string) => {
+      const current = completedDays[date];
       if (current?.completed) {
-        const { [date]: _, ...rest } = prev;
-        return rest;
+        // Delete if currently completed
+        return apiRequest('DELETE', `/api/calendar-days/${date}`);
+      } else {
+        // Create/update if not completed
+        return apiRequest('POST', '/api/calendar-days', {
+          date,
+          completed: true,
+          note: current?.note || null,
+        });
       }
-      return {
-        ...prev,
-        [date]: { date, completed: true, note: current?.note }
-      };
-    });
-  };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/calendar-days'] });
+    },
+  });
 
-  const setNote = (date: string, note: string) => {
-    setCompletedDays(prev => ({
-      ...prev,
-      [date]: { ...prev[date], date, note, completed: prev[date]?.completed ?? false }
-    }));
-  };
+  // Set note mutation
+  const setNoteMutation = useMutation({
+    mutationFn: async ({ date, note }: { date: string; note: string }) => {
+      return apiRequest('POST', '/api/calendar-days', {
+        date,
+        completed: completedDays[date]?.completed ?? false,
+        note,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/calendar-days'] });
+    },
+  });
 
-  return { completedDays, toggleDay, setNote, mainGoal, setMainGoal };
+  // Set main goal mutation
+  const setMainGoalMutation = useMutation({
+    mutationFn: async (goal: string) => {
+      return apiRequest('POST', '/api/user-goal', { goal });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/user-goal'] });
+    },
+  });
+
+  return {
+    completedDays,
+    mainGoal,
+    toggleDay: (date: string) => toggleDayMutation.mutate(date),
+    setNote: (date: string, note: string) => setNoteMutation.mutate({ date, note }),
+    setMainGoal: (goal: string) => setMainGoalMutation.mutate(goal),
+  };
 }
