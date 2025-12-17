@@ -6,6 +6,7 @@ export interface DayStatus {
   date: string;
   completed: boolean;
   note?: string;
+  dayGoal?: string;
 }
 
 export function useYearProgress() {
@@ -27,6 +28,7 @@ export function useYearProgress() {
       date: day.date,
       completed: day.completed,
       note: day.note || undefined,
+      dayGoal: day.dayGoal || undefined,
     };
     return acc;
   }, {} as Record<string, DayStatus>);
@@ -42,11 +44,14 @@ export function useYearProgress() {
         return apiRequest('DELETE', `/api/calendar-days/${date}`);
       } else {
         // Create/update if not completed
-        return apiRequest('POST', '/api/calendar-days', {
+        const payload: any = {
           date,
           completed: true,
-          note: current?.note || null,
-        });
+        };
+        if (current?.note) {
+          payload.note = current.note;
+        }
+        return apiRequest('POST', '/api/calendar-days', payload);
       }
     },
     onSuccess: () => {
@@ -56,12 +61,14 @@ export function useYearProgress() {
 
   // Set note mutation
   const setNoteMutation = useMutation({
-    mutationFn: async ({ date, note }: { date: string; note: string }) => {
-      return apiRequest('POST', '/api/calendar-days', {
+    mutationFn: async ({ date, note, dayGoal }: { date: string; note?: string; dayGoal?: string }) => {
+      const payload: any = {
         date,
         completed: completedDays[date]?.completed ?? false,
-        note,
-      });
+      };
+      if (note !== undefined) payload.note = note;
+      if (dayGoal !== undefined) payload.dayGoal = dayGoal;
+      return apiRequest('POST', '/api/calendar-days', payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/calendar-days'] });
@@ -82,7 +89,7 @@ export function useYearProgress() {
     completedDays,
     mainGoal,
     toggleDay: (date: string) => toggleDayMutation.mutate(date),
-    setNote: (date: string, note: string) => setNoteMutation.mutate({ date, note }),
+    setNote: (date: string, note?: string, dayGoal?: string) => setNoteMutation.mutate({ date, note, dayGoal }),
     setMainGoal: (goal: string) => setMainGoalMutation.mutate(goal),
   };
 }

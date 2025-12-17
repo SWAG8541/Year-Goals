@@ -5,7 +5,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
-import Landing from "@/pages/Landing";
+import Login from "@/pages/Login";
+import Register from "@/pages/Register";
+import Profile from "@/pages/Profile";
+import Tasks from "@/pages/Tasks";
+import Blog from "@/pages/Blog";
+import Feed from "@/pages/Feed";
 import { useAuth } from "@/hooks/useAuth";
 
 function Router() {
@@ -22,10 +27,18 @@ function Router() {
   return (
     <Switch>
       {!isAuthenticated ? (
-        <Route path="/" component={Landing} />
+        <>
+          <Route path="/" component={Login} />
+          <Route path="/login" component={Login} />
+          <Route path="/register" component={Register} />
+        </>
       ) : (
         <>
           <Route path="/" component={Home} />
+          <Route path="/profile" component={Profile} />
+          <Route path="/tasks" component={Tasks} />
+          <Route path="/blog" component={Blog} />
+          <Route path="/feed" component={Feed} />
         </>
       )}
       <Route component={NotFound} />

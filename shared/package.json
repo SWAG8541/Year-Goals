@@ -1,0 +1,9 @@
+{
+  "name": "year-goals-shared",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "schema.js",
+  "dependencies": {
+    "zod": "^3.25.76"
+  }
+}
