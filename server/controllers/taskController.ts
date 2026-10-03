@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { AuthRequest } from '../auth';
 import { TaskService } from '../services';
-import { createTaskSchema } from '../../shared/schema';
+import { createTaskSchema } from '../schema';
 import { z } from 'zod';
 
 export class TaskController {

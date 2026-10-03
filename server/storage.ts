@@ -1,5 +1,5 @@
 import { UserModel, CalendarDayModel, UserGoalModel } from "./db";
-import type { User, CalendarDay, UserGoal, InsertCalendarDay, InsertUserGoal } from "@shared/schema";
+import type { User, CalendarDay, UserGoal, InsertCalendarDay, InsertUserGoal } from "schema";
 
 export interface IStorage {
   // User operations

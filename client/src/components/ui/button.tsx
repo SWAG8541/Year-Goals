@@ -11,15 +11,15 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-           "bg-primary text-primary-foreground border border-primary-border",
+           "bg-primary text-primary-foreground border border-border",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm border-destructive-border",
+          "bg-destructive text-destructive-foreground shadow-sm border-destructive",
         outline:
           // Inherits the current text color. Uses shadow-xs. no shadow on active
           // No hover state
-          " border [border-color:var(--button-outline)] shadow-xs active:shadow-none ",
+          " border border-border shadow-xs active:shadow-none ",
         secondary:
-          "border bg-secondary text-secondary-foreground border border-secondary-border ",
+          "border bg-secondary text-secondary-foreground border border-border ",
         ghost: "border border-transparent",
         link: "text-primary underline-offset-4 hover:underline",
       },

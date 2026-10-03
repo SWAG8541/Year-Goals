@@ -2,11 +2,11 @@ import type { Express } from "express";
 import type { Server } from "http";
 import { storage } from "./storage";
 import { authMiddleware, generateToken, hashPassword, comparePassword, type AuthRequest } from "./auth";
-import { registerSchema, loginSchema, insertCalendarDaySchema, insertUserGoalSchema, createGoalSchema, createTaskSchema, createBlogPostSchema, createFeedPostSchema } from "../shared/schema";
+import { registerSchema, loginSchema, insertCalendarDaySchema, insertUserGoalSchema, createGoalSchema, createTaskSchema, createBlogPostSchema, createFeedPostSchema } from "./schema";
 import { sendWhatsAppMessage, generateDailyReminderMessage } from "./whatsapp";
 import { Attendance } from "./attendance";
 import { Goal, Task, BlogPost, FeedPost } from "./models";
-import { setupApiRoutes } from "./routes";
+import { setupApiRoutes } from "./routes/index";
 import { z } from "zod";
 
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {

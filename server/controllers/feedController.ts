@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { AuthRequest } from '../auth';
 import { FeedService } from '../services';
-import { createFeedPostSchema } from '../../shared/schema';
+import { createFeedPostSchema } from '../schema';
 import { z } from 'zod';
 
 export class FeedController {

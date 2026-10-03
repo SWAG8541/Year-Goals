@@ -12,7 +12,7 @@ export default function Landing() {
         backgroundRepeat: 'repeat'
       }}
     >
-      <div className="absolute inset-0 bg-white/40 pointer-events-none" />
+      <div className="absolute inset-0 bg-white/40 dark:bg-background/90 pointer-events-none" />
       
       <div className="relative z-10 text-center space-y-8 p-8 max-w-2xl">
         <div className="space-y-4">

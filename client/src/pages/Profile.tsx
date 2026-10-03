@@ -119,7 +119,7 @@ export default function Profile() {
               <Switch 
                 checked={whatsappEnabled} 
                 onCheckedChange={handleWhatsAppToggle}
-                className={`border-2 transition-all duration-200 ${whatsappEnabled ? 'data-[state=checked]:bg-green-500 border-gray-500' : 'border-gray-300'}`}
+                className={`border-2 transition-all duration-200 ${whatsappEnabled ? 'data-[state=checked]:bg-green-500 border-gray-500 dark:border-border' : 'border-gray-300 dark:border-border'}`}
               />
             </div>
 

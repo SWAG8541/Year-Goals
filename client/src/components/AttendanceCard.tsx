@@ -149,9 +149,9 @@ export function AttendanceCard() {
   const getStatusBadge = () => {
     switch (attendance.status) {
       case 'working':
-        return <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Working</span>;
+        return <span className="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 rounded-full text-xs font-medium">Working</span>;
       case 'on-break':
-        return <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-medium">On Break</span>;
+        return <span className="px-2 py-1 bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300 rounded-full text-xs font-medium">On Break</span>;
       case 'checked-out':
         return <span className="px-2 py-1 bg-muted text-muted-foreground rounded-full text-xs font-medium">Checked Out</span>;
       default:

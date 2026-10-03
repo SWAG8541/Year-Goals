@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { AuthRequest } from '../auth';
 import { BlogService } from '../services';
-import { createBlogPostSchema } from '../../shared/schema';
+import { createBlogPostSchema } from '../schema';
 import { z } from 'zod';
 
 export class BlogController {

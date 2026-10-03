@@ -10,3 +10,4 @@ export function setupApiRoutes(app: Express) {
   app.use('/api/blog', blogRoutes);
   app.use('/api/feed', feedRoutes);
 }
+

@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { AuthRequest } from '../auth';
 import { GoalService, TaskService } from '../services';
-import { createGoalSchema } from '../../shared/schema';
+import { createGoalSchema } from '../schema';
 import { z } from 'zod';
 
 export class GoalController {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { User, Edit, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -27,6 +28,9 @@ export function ProfileCard() {
     return (first + last).toUpperCase() || 'SP';
   };
 
+  const profileImage = localStorage.getItem(`profileImage_${user?._id || user?.email || user?.phone}`) || user?.profileImageUrl || '';
+
+  
   return (
     <>
       <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 rounded-lg p-6">
@@ -35,10 +39,23 @@ export function ProfileCard() {
         </div>
         
         <div className="flex items-center gap-4 mb-4">
-          <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
-            <span className="text-2xl font-bold text-white">
+          <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center overflow-hidden">
+{
+  profileImage ? (
+    <Avatar>
+    <AvatarImage
+      src={profileImage}
+      alt="Profile"
+      className = "w-full h-full object-cover"
+      />
+    </Avatar>
+
+  ):( 
+  
+  <span className="text-2xl font-bold text-primary-foreground">
               {getInitials()}
-            </span>
+            </span>)
+}
           </div>
           <div>
             <h4 className="font-bold">{user?.firstName} {user?.lastName}</h4>
@@ -71,7 +88,22 @@ export function ProfileCard() {
           
           <div className="flex flex-col items-center mb-6">
             <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center relative mb-2">
-              <span className="text-3xl font-bold text-white">{getInitials()}</span>
+{
+  profileImage ? (
+    <Avatar>
+    <AvatarImage
+      src={profileImage}
+      alt="Profile"
+      className = "w-full h-full object-cover"
+      />
+    </Avatar>
+
+  ):( 
+  
+  <span className="text-2xl font-bold text-primary-foreground">
+              {getInitials()}
+            </span>)
+}
               <Button size="sm" variant="ghost" className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-background border">
                 <Camera className="w-4 h-4" />
               </Button>

@@ -53,7 +53,7 @@ export function Navbar({ currentPage = 'home' }: NavbarProps) {
                 "px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 border",
                 isActive
                   ? "bg-primary/20 border-primary/30 text-primary shadow-sm"
-                  : "bg-white/50 border-gray-200/50 text-gray-700 hover:bg-primary/10 hover:border-primary/20 hover:text-primary"
+                  : "bg-white/50 border-gray-200/50 text-gray-700 dark:bg-background/50 dark:border-border/50 dark:text-foreground hover:bg-primary/10 hover:border-primary/20 hover:text-primary"
               )}
             >
               {item.label}
@@ -76,7 +76,6 @@ export function Navbar({ currentPage = 'home' }: NavbarProps) {
               {user?.firstName?.[0] || user?.email?.[0] || user?.phone?.[0] || 'U'}
             </AvatarFallback>
           </Avatar>
-          Profile
         </Button>
         <Button 
           variant="outline" 

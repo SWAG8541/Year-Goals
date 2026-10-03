@@ -79,7 +79,7 @@ export function WhatsAppToggle() {
         "border-2 transition-all duration-200",
         isEnabled 
           ? "bg-green-500 hover:bg-green-600 border-green-600 text-white" 
-          : "bg-background hover:bg-muted border-gray-300 text-foreground"
+          : "bg-background hover:bg-muted border-gray-300 dark:border-border text-foreground"
       )}
     >
       <MessageCircle className="w-4 h-4" />

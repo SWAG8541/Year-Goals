@@ -85,18 +85,18 @@ const FESTIVALS_BY_YEAR: Record<number, Record<string, string>> = {
 };
 
 const MONTH_COLORS = [
-  'bg-red-100/80 border-red-200 text-red-900',
-  'bg-orange-100/80 border-orange-200 text-orange-900',
-  'bg-amber-100/80 border-amber-200 text-amber-900',
-  'bg-yellow-100/80 border-yellow-200 text-yellow-900',
-  'bg-lime-100/80 border-lime-200 text-lime-900',
-  'bg-green-100/80 border-green-200 text-green-900',
-  'bg-emerald-100/80 border-emerald-200 text-emerald-900',
-  'bg-teal-100/80 border-teal-200 text-teal-900',
-  'bg-cyan-100/80 border-cyan-200 text-cyan-900',
-  'bg-sky-100/80 border-sky-200 text-sky-900',
-  'bg-blue-100/80 border-blue-200 text-blue-900',
-  'bg-indigo-100/80 border-indigo-200 text-indigo-900',
+  'bg-red-100/80 border-red-200 text-red-900 dark:bg-red-950/80 dark:border-red-800 dark:text-red-200',
+  'bg-orange-100/80 border-orange-200 text-orange-900 dark:bg-orange-950/80 dark:border-orange-800 dark:text-orange-200',
+  'bg-amber-100/80 border-amber-200 text-amber-900 dark:bg-amber-950/80 dark:border-amber-800 dark:text-amber-200',
+  'bg-yellow-100/80 border-yellow-200 text-yellow-900 dark:bg-yellow-950/80 dark:border-yellow-800 dark:text-yellow-200',
+  'bg-lime-100/80 border-lime-200 text-lime-900 dark:bg-lime-950/80 dark:border-lime-800 dark:text-lime-200',
+  'bg-green-100/80 border-green-200 text-green-900 dark:bg-green-950/80 dark:border-green-800 dark:text-green-200',
+  'bg-emerald-100/80 border-emerald-200 text-emerald-900 dark:bg-emerald-950/80 dark:border-emerald-800 dark:text-emerald-200',
+  'bg-teal-100/80 border-teal-200 text-teal-900 dark:bg-teal-950/80 dark:border-teal-800 dark:text-teal-200',
+  'bg-cyan-100/80 border-cyan-200 text-cyan-900 dark:bg-cyan-950/80 dark:border-cyan-800 dark:text-cyan-200',
+  'bg-sky-100/80 border-sky-200 text-sky-900 dark:bg-sky-950/80 dark:border-sky-800 dark:text-sky-200',
+  'bg-blue-100/80 border-blue-200 text-blue-900 dark:bg-blue-950/80 dark:border-blue-800 dark:text-blue-200',
+  'bg-indigo-100/80 border-indigo-200 text-indigo-900 dark:bg-indigo-950/80 dark:border-indigo-800 dark:text-indigo-200',
 ];
 
 type ViewMode = 'day' | 'week' | 'month' | 'today';
@@ -255,7 +255,7 @@ export function YearGrid() {
 
                     {isCompleted && (
                       <svg 
-                        className="absolute inset-0 w-full h-full text-black/60 pointer-events-none" 
+                        className="absolute inset-0 w-full h-full text-black/60 dark:text-current pointer-events-none"
                         viewBox="0 0 100 100" 
                         preserveAspectRatio="none"
                       >
@@ -275,13 +275,13 @@ export function YearGrid() {
                     )}
                   </div>
                 </TooltipTrigger>
-                <TooltipContent className="text-center p-3 bg-white dark:bg-gray-800 backdrop-blur border shadow-xl">
+                <TooltipContent className="text-center p-3 bg-background text-foreground border-border backdrop-blur border shadow-xl">
                   <p className="font-bold text-sm">{format(day, 'MMMM do, yyyy')}</p>
                   <p className="text-xs text-muted-foreground">{format(day, 'EEEE')}</p>
                   <p className="text-xs mt-1 text-primary/80 font-mono">Day {dayOfYear} of {days.length}</p>
                   
                   {festival && (
-                    <div className="mt-2 text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded">
+                    <div className="mt-2 text-xs font-bold text-amber-600 bg-amber-50 dark:text-amber-300 dark:bg-amber-950 px-2 py-1 rounded">
                       🎉 {festival}
                     </div>
                   )}
@@ -340,7 +340,7 @@ export function YearGrid() {
                       )}>
                       <span className="font-bold text-lg">{weekNumber}</span>
                       <span className="text-[10px] opacity-70">Week</span>
-                      <div className="w-full bg-white/50 rounded-full h-1.5 mt-1">
+                      <div className="w-full bg-white/50 dark:bg-background/50 rounded-full h-1.5 mt-1">
                         <div 
                           className="bg-current h-1.5 rounded-full transition-all opacity-70" 
                           style={{ width: `${weekProgress}%` }}
@@ -349,7 +349,7 @@ export function YearGrid() {
                       <span className="text-[9px] mt-0.5 font-medium">{completedInWeek}/7</span>
                     </div>
                   </TooltipTrigger>
-                  <TooltipContent className="text-center p-3 bg-white dark:bg-gray-800 backdrop-blur border shadow-xl">
+                  <TooltipContent className="text-center p-3 bg-background text-foreground border-border backdrop-blur border shadow-xl">
                     <p className="font-bold text-sm">Week {weekNumber}</p>
                     <p className="text-xs text-muted-foreground">
                       {format(weekStart, 'MMM do')} - {format(weekEnd, 'MMM do, yyyy')}
@@ -365,7 +365,7 @@ export function YearGrid() {
                         return (
                           <div key={dateKey} className={cn(
                             "w-4 h-4 rounded-sm text-[8px] flex items-center justify-center",
-                            isCompleted ? "bg-green-500 text-white" : "bg-gray-200",
+                            isCompleted ? "bg-green-500 text-white" : "bg-gray-200 dark:bg-muted dark:text-muted-foreground",
                             isTodayDate && "ring-1 ring-primary"
                           )}>
                             {format(day, 'd')}
@@ -419,7 +419,7 @@ export function YearGrid() {
                       )}>
                       <span className="font-bold text-2xl">{format(month, 'MMM')}</span>
                       <span className="text-xs opacity-70 mb-2">{format(month, 'yyyy')}</span>
-                      <div className="w-full bg-white/50 rounded-full h-2 mb-1">
+                      <div className="w-full bg-white/50 dark:bg-background/50 rounded-full h-2 mb-1">
                         <div 
                           className="bg-current h-2 rounded-full transition-all opacity-70" 
                           style={{ width: `${monthProgress}%` }}
@@ -429,7 +429,7 @@ export function YearGrid() {
                       <span className="text-[10px] opacity-60">{monthProgress.toFixed(0)}%</span>
                     </div>
                   </TooltipTrigger>
-                  <TooltipContent className="text-center p-3 bg-white dark:bg-gray-800 backdrop-blur border shadow-xl">
+                  <TooltipContent className="text-center p-3 bg-background text-foreground border-border backdrop-blur border shadow-xl">
                     <p className="font-bold text-sm">{format(month, 'MMMM yyyy')}</p>
                     <p className="text-xs mt-1 text-primary/80 font-mono">
                       {completedInMonth} of {monthDays.length} days completed ({monthProgress.toFixed(1)}%)
@@ -503,7 +503,7 @@ export function YearGrid() {
                       <span className="font-bold">{hour.toString().padStart(2, '0')}</span>
                     </div>
                   </TooltipTrigger>
-                  <TooltipContent className="text-center p-3 bg-white dark:bg-gray-800 backdrop-blur border shadow-xl">
+                  <TooltipContent className="text-center p-3 bg-background text-foreground border-border backdrop-blur border shadow-xl">
                     <p className="font-bold text-sm">{hour.toString().padStart(2, '0')}:00 - {hour.toString().padStart(2, '0')}:59</p>
                     <p className="text-xs text-muted-foreground capitalize">{status === 'mixed' ? 'Working + Break' : status}</p>
                     <p className="text-[10px] mt-1 text-muted-foreground">Click to view minute details</p>
@@ -560,7 +560,7 @@ export function YearGrid() {
                 "aspect-square flex items-center justify-center text-xs border rounded transition-all",
                 status === 'working' && "bg-green-500 text-white border-green-600",
                 status === 'break' && "bg-red-500 text-white border-red-600",
-                status === 'inactive' && "bg-gray-200 text-gray-600 border-gray-300",
+                status === 'inactive' && "bg-gray-200 text-gray-600 border-gray-300 dark:bg-muted dark:text-muted-foreground dark:border-border",
                 isCurrentMinute && "ring-2 ring-primary ring-offset-1"
               )}
             >
@@ -750,14 +750,14 @@ export function YearGrid() {
                     onContextMenu={(e) => canEdit && handleRightClick(e, dateKey)}
                     className={cn(
                       "w-12 h-12 flex items-center justify-center text-sm border-2 rounded-lg transition-all",
-                      isCompleted ? "bg-green-100 border-green-300 text-green-800" : "bg-gray-50 border-gray-200",
+                      isCompleted ? "bg-green-100 border-green-300 text-green-800 dark:bg-green-900/30 dark:border-green-700 dark:text-green-300" : "bg-gray-50 border-gray-200 dark:bg-muted dark:border-border",
                       isTodayDate && "ring-2 ring-primary ring-offset-1",
                       canMark ? "cursor-pointer hover:brightness-95" : "cursor-not-allowed opacity-70"
                     )}
                   >
                     {format(day, 'd')}
                     {isCompleted && (
-                      <svg className="absolute w-3 h-3 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                      <svg className="absolute w-3 h-3 text-green-600 dark:text-green-400" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     )}
@@ -789,7 +789,7 @@ export function YearGrid() {
               <span>Break</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-gray-200 rounded"></div>
+              <div className="w-4 h-4 bg-gray-200 dark:bg-muted rounded"></div>
               <span>Inactive</span>
             </div>
           </div>
@@ -821,14 +821,14 @@ export function YearGrid() {
                     onContextMenu={(e) => canEdit && handleRightClick(e, dateKey)}
                     className={cn(
                       "w-10 h-10 flex items-center justify-center text-sm border-2 rounded-lg transition-all relative",
-                      isCompleted ? "bg-green-100 border-green-300 text-green-800" : "bg-gray-50 border-gray-200",
+                      isCompleted ? "bg-green-100 border-green-300 text-green-800 dark:bg-green-900/30 dark:border-green-700 dark:text-green-300" : "bg-gray-50 border-gray-200 dark:bg-muted dark:border-border",
                       isTodayDate && "ring-2 ring-primary ring-offset-1",
                       canMark ? "cursor-pointer hover:brightness-95" : "cursor-not-allowed opacity-70"
                     )}
                   >
                     {format(day, 'd')}
                     {isCompleted && (
-                      <svg className="absolute w-3 h-3 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                      <svg className="absolute w-3 h-3 text-green-600 dark:text-green-400" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     )}

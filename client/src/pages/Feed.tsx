@@ -206,11 +206,11 @@ export default function Feed() {
                     <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-sm font-medium">{post.content.goalTitle}</span>
-                        <span className="text-sm text-green-600 font-semibold">
+                        <span className="text-sm text-green-600 dark:text-green-400 font-semibold">
                           Day {post.content.progress}
                         </span>
                       </div>
-                      <div className="w-full bg-green-200 rounded-full h-2">
+                      <div className="w-full bg-green-200 dark:bg-green-900 rounded-full h-2">
                         <div 
                           className="bg-green-500 h-2 rounded-full transition-all"
                           style={{ width: `${(post.content.progress / 100) * 100}%` }}
