@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { ProfilePicture } from "@/components/ProfilePicture";
@@ -28,7 +29,7 @@ export default function Profile() {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:4255/api/whatsapp/toggle', {
+      const res = await fetch(apiUrl('/api/whatsapp/toggle'), {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -44,7 +45,7 @@ export default function Profile() {
       
       if (checked) {
         // Get WhatsApp reminder link
-        const linkRes = await fetch('http://localhost:4255/api/whatsapp/reminder-link', {
+        const linkRes = await fetch(apiUrl('/api/whatsapp/reminder-link'), {
           headers: { 'Authorization': `Bearer ${token}` },
           credentials: 'include'
         });

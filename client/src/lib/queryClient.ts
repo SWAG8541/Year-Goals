@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api";
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 async function throwIfResNotOk(res: Response) {
@@ -7,7 +8,6 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
-const API_BASE_URL = "http://localhost:4255";
 
 export async function apiRequest(
   method: string,
@@ -25,7 +25,7 @@ export async function apiRequest(
     headers["Content-Type"] = "application/json";
   }
 
-  const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
+  const fullUrl = apiUrl(url);
   const res = await fetch(fullUrl, {
     method,
     headers,
@@ -51,7 +51,7 @@ export const getQueryFn: <T>(options: {
     }
 
     const url = queryKey.join("/") as string;
-    const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
+    const fullUrl = apiUrl(url);
     const res = await fetch(fullUrl, {
       headers,
       credentials: "include",

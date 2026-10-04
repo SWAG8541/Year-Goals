@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -5,7 +6,7 @@ import { Flame, Target, TrendingUp, Calendar } from "lucide-react";
 
 async function fetchAnalytics(endpoint: string) {
   const token = localStorage.getItem("token");
-  const fullUrl = endpoint.startsWith('http') ? endpoint : `http://localhost:4255${endpoint}`;
+  const fullUrl = apiUrl(endpoint);
   const res = await fetch(fullUrl, {
     headers: { Authorization: `Bearer ${token}` },
     credentials: "include",

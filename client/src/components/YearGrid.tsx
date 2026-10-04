@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api";
 import React, { useEffect, useState } from 'react';
 import { eachDayOfInterval, format, isToday, getDayOfYear, getMonth, isBefore, startOfDay, eachWeekOfInterval, startOfWeek, endOfWeek, eachMonthOfInterval, startOfMonth, endOfMonth, getWeek } from 'date-fns';
 import { useYearProgress } from '@/hooks/useYearProgress';
@@ -202,7 +203,7 @@ export function YearGrid() {
 
   const fetchTodayAttendance = async () => {
     try {
-      const response = await fetch('http://localhost:4255/api/attendance/today', {
+      const response = await fetch(apiUrl('/api/attendance/today'), {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       if (response.ok) {

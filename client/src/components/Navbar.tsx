@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api";
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -24,7 +25,7 @@ export function Navbar({ currentPage = 'home' }: NavbarProps) {
 
   const handleLogout = async () => {
     try {
-      await fetch('http://localhost:4255/api/auth/logout', { method: 'POST', credentials: 'include' });
+      await fetch(apiUrl('/api/auth/logout'), { method: 'POST', credentials: 'include' });
     } catch (error) {
       console.error('Logout error:', error);
     }

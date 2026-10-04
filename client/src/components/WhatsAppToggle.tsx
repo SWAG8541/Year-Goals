@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api";
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -17,7 +18,7 @@ export function WhatsAppToggle() {
   const fetchWhatsAppStatus = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:4255/api/whatsapp/status', {
+      const res = await fetch(apiUrl('/api/whatsapp/status'), {
         headers: { 'Authorization': `Bearer ${token}` },
         credentials: 'include'
       });
@@ -43,7 +44,7 @@ export function WhatsAppToggle() {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:4255/api/whatsapp/toggle', {
+      const res = await fetch(apiUrl('/api/whatsapp/toggle'), {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

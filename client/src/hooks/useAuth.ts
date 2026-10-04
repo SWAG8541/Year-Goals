@@ -1,13 +1,13 @@
+import { apiUrl } from "@/lib/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-const API_BASE_URL = "http://localhost:4255";
 
 async function fetchUser() {
   const token = localStorage.getItem("token");
   if (!token) return null;
 
   try {
-    const res = await fetch(`${API_BASE_URL}/api/auth/user`, {
+    const res = await fetch(apiUrl(`/api/auth/user`), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -39,7 +39,7 @@ export function useAuth() {
   const updateProfileMutation = useMutation({
     mutationFn: async (profileData: { firstName: string; lastName: string; email: string; phone: string }) => {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/auth/profile`, {
+      const res = await fetch(apiUrl(`/api/auth/profile`), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

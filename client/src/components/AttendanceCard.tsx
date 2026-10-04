@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api";
 import React, { useState, useEffect } from 'react';
 import { Clock, Play, Square, Coffee } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -58,7 +59,7 @@ export function AttendanceCard({ onAttendanceChange }: {
 
   const fetchAttendance = async () => {
     try {
-      const response = await fetch('http://localhost:4255/api/attendance/today', {
+      const response = await fetch(apiUrl('/api/attendance/today'), {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       if (response.ok) {
@@ -76,7 +77,7 @@ export function AttendanceCard({ onAttendanceChange }: {
 
   const handleClockIn = async () => {
     try {
-      const response = await fetch('http://localhost:4255/api/attendance/clock-in', {
+      const response = await fetch(apiUrl('/api/attendance/clock-in'), {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -95,7 +96,7 @@ export function AttendanceCard({ onAttendanceChange }: {
 
   const handleClockOut = async () => {
     try {
-      const response = await fetch('http://localhost:4255/api/attendance/clock-out', {
+      const response = await fetch(apiUrl('/api/attendance/clock-out'), {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -112,7 +113,7 @@ export function AttendanceCard({ onAttendanceChange }: {
 
   const handleBreakStart = async () => {
     try {
-      const response = await fetch('http://localhost:4255/api/attendance/break-start', {
+      const response = await fetch(apiUrl('/api/attendance/break-start'), {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -129,7 +130,7 @@ export function AttendanceCard({ onAttendanceChange }: {
 
   const handleBreakEnd = async () => {
     try {
-      const response = await fetch('http://localhost:4255/api/attendance/break-end', {
+      const response = await fetch(apiUrl('/api/attendance/break-end'), {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

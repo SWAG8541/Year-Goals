@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,7 +40,7 @@ export default function Tasks() {
 
   const fetchGoals = async () => {
     try {
-      const res = await fetch('http://localhost:4255/api/goals', {
+      const res = await fetch(apiUrl('/api/goals'), {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         credentials: 'include'
       });
@@ -56,7 +57,7 @@ export default function Tasks() {
 
   const fetchTasks = async (goalId: string) => {
     try {
-      const res = await fetch(`http://localhost:4255/api/tasks/${goalId}`, {
+      const res = await fetch(apiUrl(`/api/tasks/${goalId}`), {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         credentials: 'include'
       });
@@ -73,7 +74,7 @@ export default function Tasks() {
     if (!newGoal.title.trim()) return;
     
     try {
-      const res = await fetch('http://localhost:4255/api/goals', {
+      const res = await fetch(apiUrl('/api/goals'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -101,7 +102,7 @@ export default function Tasks() {
     if (!newTask.title.trim() || !newTask.goalId) return;
     
     try {
-      const res = await fetch('http://localhost:4255/api/tasks', {
+      const res = await fetch(apiUrl('/api/tasks'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -129,7 +130,7 @@ export default function Tasks() {
 
   const toggleTask = async (goalId: string, taskId: string) => {
     try {
-      const res = await fetch(`http://localhost:4255/api/tasks/${taskId}/toggle`, {
+      const res = await fetch(apiUrl(`/api/tasks/${taskId}/toggle`), {
         method: 'PUT',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         credentials: 'include'
@@ -151,7 +152,7 @@ export default function Tasks() {
 
   const deleteGoal = async (goalId: string) => {
     try {
-      const res = await fetch(`http://localhost:4255/api/goals/${goalId}`, {
+      const res = await fetch(apiUrl(`/api/goals/${goalId}`), {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         credentials: 'include'
@@ -174,7 +175,7 @@ export default function Tasks() {
 
   const deleteTask = async (goalId: string, taskId: string) => {
     try {
-      const res = await fetch(`http://localhost:4255/api/tasks/${taskId}`, {
+      const res = await fetch(apiUrl(`/api/tasks/${taskId}`), {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         credentials: 'include'
