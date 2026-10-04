@@ -12,7 +12,7 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
 export const env = {
   port,
   nodeEnv: process.env.NODE_ENV || 'development',
-  mongodbUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/year-goals',
-  jwtSecret: process.env.JWT_SECRET || 'your-secret-key-change-in-production',
-  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:8541',
+  mongodbUri: process.env.MONGODB_URI ,
+  jwtSecret: process.env.JWT_SECRET ,
+  corsOrigin: process.env.CORS_ORIGIN ,
 };
