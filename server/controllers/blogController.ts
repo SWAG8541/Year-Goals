@@ -1,7 +1,7 @@
 import { Response } from 'express';
-import { AuthRequest } from '../auth';
+import { AuthRequest } from '../middleware/authMiddleware';
 import { BlogService } from '../services';
-import { createBlogPostSchema } from '../schema';
+import { createBlogPostSchema } from '../validators/schema';
 import { z } from 'zod';
 
 export class BlogController {

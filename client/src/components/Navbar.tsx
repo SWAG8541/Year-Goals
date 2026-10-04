@@ -17,9 +17,9 @@ export function Navbar({ currentPage = 'home' }: NavbarProps) {
   
   const navItems = [
     { id: 'home', label: 'Home', href: '/' },
-    { id: 'tasks', label: 'Tasks', href: '/tasks' },
-    { id: 'blog', label: 'Blog', href: '/blog' },
-    { id: 'feed', label: 'Feed', href: '/feed' },
+    // { id: 'tasks', label: 'Tasks', href: '/tasks' },
+    // { id: 'blog', label: 'Blog', href: '/blog' },
+    // { id: 'feed', label: 'Feed', href: '/feed' },
   ];
 
   const handleLogout = async () => {

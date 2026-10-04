@@ -1,7 +1,7 @@
 import { Response } from 'express';
-import { AuthRequest } from '../auth';
+import { AuthRequest } from '../middleware/authMiddleware';
 import { GoalService, TaskService } from '../services';
-import { createGoalSchema } from '../schema';
+import { createGoalSchema } from '../validators/schema';
 import { z } from 'zod';
 
 export class GoalController {

@@ -1,7 +1,7 @@
 import { Response } from 'express';
-import { AuthRequest } from '../auth';
+import { AuthRequest } from '../middleware/authMiddleware';
 import { FeedService } from '../services';
-import { createFeedPostSchema } from '../schema';
+import { createFeedPostSchema } from '../validators/schema';
 import { z } from 'zod';
 
 export class FeedController {

@@ -13,7 +13,7 @@ export class TaskService {
   static async toggleTask(taskId: string, userId: string) {
     const task = await Task.findOne({ _id: taskId, userId });
     if (!task) return null;
-    
+
     task.completed = !task.completed;
     task.updatedAt = new Date();
     return task.save();

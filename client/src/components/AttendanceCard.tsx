@@ -10,9 +10,12 @@ interface AttendanceData {
   workingHours: number;
   breakTime: number;
   currentBreakStart?: string;
+  breaks?: { startTime: string; endTime?: string | null }[];
 }
 
-export function AttendanceCard() {
+export function AttendanceCard({ onAttendanceChange }: {
+  onAttendanceChange?: (attendance: AttendanceData) => void;
+}) {
   const [attendance, setAttendance] = useState<AttendanceData>({
     status: 'not-started',
     workingHours: 0,
@@ -61,6 +64,7 @@ export function AttendanceCard() {
       if (response.ok) {
         const data = await response.json();
         setAttendance(data);
+        onAttendanceChange?.(data);
         if (data.checkInTime && !initialCheckInTime) {
           setInitialCheckInTime(data.checkInTime);
         }

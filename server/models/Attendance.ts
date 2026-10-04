@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Types } from 'mongoose';
 
 export interface AttendanceRecord {
   userId: string;
@@ -6,6 +6,7 @@ export interface AttendanceRecord {
   checkInTime?: Date;
   checkOutTime?: Date;
   breaks: {
+    _id: Types.ObjectId;
     startTime: Date;
     endTime?: Date;
   }[];
@@ -25,8 +26,8 @@ const attendanceSchema = new Schema<AttendanceRecord>({
   }],
   totalWorkingMinutes: { type: Number, default: 0 },
   totalBreakMinutes: { type: Number, default: 0 },
-  status: { 
-    type: String, 
+  status: {
+    type: String,
     enum: ['not-started', 'working', 'on-break', 'checked-out'],
     default: 'not-started'
   }

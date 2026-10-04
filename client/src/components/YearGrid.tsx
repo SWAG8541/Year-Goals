@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { eachDayOfInterval, format, isToday, getDayOfYear, getMonth, isBefore, startOfDay, eachWeekOfInterval, startOfWeek, endOfWeek, eachMonthOfInterval, startOfMonth, endOfMonth, getWeek } from 'date-fns';
 import { useYearProgress } from '@/hooks/useYearProgress';
 import { useReminder } from '@/hooks/useReminder';
@@ -213,6 +213,14 @@ export function YearGrid() {
       console.error('Failed to fetch today attendance:', error);
     }
   };
+
+  useEffect(() => {
+    if (viewMode !== 'today' && !hourDialogOpen) return;
+
+    void fetchTodayAttendance();
+    const timer = window.setInterval(() => void fetchTodayAttendance(), 15000);
+    return () => window.clearInterval(timer);
+  }, [viewMode, hourDialogOpen]);
 
   const renderDayView = () => (
     <div className="flex justify-center">
@@ -489,7 +497,7 @@ export function YearGrid() {
                       onClick={() => {
                         setSelectedHour(hour);
                         setHourDialogOpen(true);
-                        if (!todayAttendance) fetchTodayAttendance();
+                        void fetchTodayAttendance();
                       }}
                       className={cn(
                         "aspect-square flex items-center justify-center text-lg border-2 rounded-lg cursor-pointer transition-all p-2",
@@ -528,23 +536,24 @@ export function YearGrid() {
       const minuteTime = new Date();
       minuteTime.setHours(selectedHour, minute, 0, 0);
       
-      if (minuteTime < checkIn || minuteTime > checkOut) return 'inactive';
+      const minuteEnd = new Date(minuteTime.getTime() + 60000);
+      if (minuteEnd <= checkIn || minuteTime >= checkOut) return 'inactive';
+      const elapsedMinuteEnd = Math.min(minuteEnd.getTime(), checkOut.getTime());
       
-      const isBreak = todayAttendance.breaks?.some((breakSession: any) => {
-        const breakStart = new Date(breakSession.startTime);
-        const breakEnd = breakSession.endTime ? new Date(breakSession.endTime) : new Date();
-        const isInBreak = minuteTime >= breakStart && minuteTime < breakEnd;
-        if (isInBreak) {
-          console.log(`Minute ${minute} is in break:`, { minuteTime, breakStart, breakEnd });
+      // Include completed breaks so their history remains visible after resuming work.
+      const isBreak = todayAttendance.breaks?.some(
+        (breakSession: { startTime: string; endTime?: string | null }) => {
+          const breakStart = new Date(breakSession.startTime);
+          const breakEnd = breakSession.endTime
+            ? new Date(breakSession.endTime)
+            : checkOut;
+
+          // Mark the cell red when any elapsed part of this minute overlaps a break.
+          return breakStart.getTime() < elapsedMinuteEnd && breakEnd > minuteTime;
         }
-        return isInBreak;
-      });
-      
-      const status = isBreak ? 'break' : 'working';
-      if (minute % 10 === 0) { // Log every 10th minute for debugging
-        console.log(`Minute ${minute} status:`, status, { isBreak, hasBreaks: !!todayAttendance.breaks?.length });
-      }
-      return status;
+      ) ?? false;
+
+      return isBreak ? 'break' : 'working';
     };
     
     return (
@@ -577,7 +586,7 @@ export function YearGrid() {
       {/* Profile and Attendance Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <ProfileCard />
-        <AttendanceCard />
+        <AttendanceCard onAttendanceChange={setTodayAttendance} />
       </div>
 
       {/* Goal Display Banner */}
@@ -626,18 +635,24 @@ export function YearGrid() {
         {/* View Toggle */}
         <div className="flex justify-center mb-4">
           <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as ViewMode)} className="bg-muted rounded-lg p-1">
+            
             <ToggleGroupItem value="today" className="px-4 py-2 text-sm font-medium">
               Today
             </ToggleGroupItem>
-            <ToggleGroupItem value="day" className="px-4 py-2 text-sm font-medium">
-              Day
-            </ToggleGroupItem>
+
             <ToggleGroupItem value="week" className="px-4 py-2 text-sm font-medium">
               Week
             </ToggleGroupItem>
+            
             <ToggleGroupItem value="month" className="px-4 py-2 text-sm font-medium">
               Month
             </ToggleGroupItem>
+            
+            <ToggleGroupItem value="day" className="px-4 py-2 text-sm font-medium">
+              Year
+            </ToggleGroupItem>
+
+
           </ToggleGroup>
         </div>
       </header>

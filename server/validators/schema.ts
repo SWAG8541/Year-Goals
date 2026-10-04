@@ -1,9 +1,11 @@
-import * as z from "zod"; 
+import * as z from "zod";
 
 // User types
 export interface User {
   _id: string;
   email: string;
+  phone: string;
+  whatsappNotifications: boolean;
   firstName?: string;
   lastName?: string;
   profileImageUrl?: string;
