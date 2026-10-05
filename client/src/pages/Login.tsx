@@ -6,12 +6,38 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { signInWithGoogle } from "../firebase/auth";
 
 export default function Login() {
+
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
+
+  const handleGoogleLogin = async (): Promise<void> => {
+    setIsLoading(true);
+    try {
+      const { idToken } = await signInWithGoogle();
+      const res = await fetch(apiUrl("/api/auth/google"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ idToken }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Google login failed");
+      if (typeof data.token !== "string" || !data.token) throw new Error("Missing application session token");
+      localStorage.setItem("token", data.token);
+      toast({ title: "Welcome!", description: "You've successfully signed in with Google." });
+      window.location.href = "/";
+    } catch (error) {
+      toast({ title: "Google sign-in failed", variant: "destructive",
+        description: error instanceof Error ? error.message : "Please try again." });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,6 +108,12 @@ export default function Login() {
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Logging in..." : "Login"}
             </Button>
+            <Button type="button" className="w-full" disabled={isLoading} onClick={handleGoogleLogin}>
+                Continue with Google
+            </Button>
+
+
+
           </form>
           <div className="mt-4 text-center text-sm">
             Don't have an account?{" "}

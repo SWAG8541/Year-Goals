@@ -3,6 +3,9 @@ import { z } from 'zod';
 import type { AuthRequest } from '../middleware/authMiddleware';
 import { loginSchema, registerSchema } from '../validators/schema';
 import { AuthError, AuthService } from '../services/authService';
+import { randomUUID } from 'node:crypto';
+import { log } from '../utils/logger';
+
 
 const tokenCookieOptions = { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 };
 
@@ -57,6 +60,31 @@ export class AuthController {
       res.json(await AuthService.updateProfile(req.userId!, { firstName, lastName, email, phone }));
     } catch (error) {
       handleAuthError(error, res, 'Failed to update profile');
+    }
+  }
+
+  static async googleLogin(req: Request, res: Response) {
+    const requestId = randomUUID();
+    const startedAt = Date.now();
+    const trace = (message: string) => log(`[${requestId}] ${message}`, 'google-auth');
+
+    trace('Request received: POST /api/auth/google');
+    trace(`Input fields present: email=${!!req.body?.email}, name=${!!req.body?.name}, uid=${!!req.body?.uid}, idToken=${!!req.body?.idToken}`);
+    try {
+      const result = await AuthService.googleLogin(z.object({ idToken: z.string().min(1).max(16384) }).parse(req.body), trace);
+      res.cookie('token', result.token, tokenCookieOptions);
+      trace('Application session cookie set');
+      res.json(result);
+      trace(`Login response sent (200), duration=${Date.now() - startedAt}ms`);
+    } catch (error) {
+      const status = error instanceof AuthError ? error.status : error instanceof z.ZodError ? 400 : 500;
+      // Log categories only: raw database errors can contain personal data.
+      trace(`Login failed: type=${error instanceof Error ? error.name : 'Unknown'}, status=${status}, duration=${Date.now() - startedAt}ms`);
+      if (status === 500) {
+        res.status(500).json({ message: 'Google login failed' });
+      } else {
+        handleAuthError(error, res, 'Google login failed');
+      }
     }
   }
 }
