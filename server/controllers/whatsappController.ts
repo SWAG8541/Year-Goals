@@ -19,4 +19,12 @@ export class WhatsAppController {
       handleControllerError(error, res, "Failed to generate WhatsApp link");
     }
   }
+
+  static async getStatus(req: AuthRequest, res: Response) {
+    try {
+      res.json(await WhatsAppService.getStatus(req.userId!));
+    } catch (error) {
+      handleControllerError(error, res, "Failed to genrate whatsApp Status")
+    }
+  }
 }

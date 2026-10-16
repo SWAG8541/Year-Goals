@@ -30,4 +30,13 @@ export class WhatsAppService {
 
     return { url: whatsappUrl };
   }
+
+  static async getStatus (userId: string){
+    const user = await AuthService.getUser(userId);
+    if (!user) {  
+      throw new HttpError(400, "WhatsApp Status Not Availble");
+  }
+  return{ success: true}
+}
+
 }
