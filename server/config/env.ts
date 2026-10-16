@@ -17,7 +17,7 @@ function required(name: string): string {
 
 export const env = {
   port,
-  nodeEnv: process.env.NODE_ENV || 'development' || 'production',
+  nodeEnv: process.env.NODE_ENV || 'production',
   mongodbUri: required('MONGODB_URI'),
   jwtSecret: required('JWT_SECRET'),
   firebaseProjectId: process.env.FIREBASE_PROJECT_ID?.trim(),
