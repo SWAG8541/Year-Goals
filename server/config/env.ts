@@ -22,4 +22,5 @@ export const env = {
   jwtSecret: required('JWT_SECRET'),
   firebaseProjectId: process.env.FIREBASE_PROJECT_ID?.trim(),
   corsOrigin: process.env.CORS_ORIGIN ,
+  
 };
