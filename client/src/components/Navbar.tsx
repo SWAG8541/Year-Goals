@@ -30,7 +30,7 @@ export function Navbar({ currentPage = 'home' }: NavbarProps) {
       console.error('Logout error:', error);
     }
     localStorage.removeItem('token');
-    window.location.href = '/login';
+    window.location.href = '/';
   };
 
   return (

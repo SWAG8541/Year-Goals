@@ -34,3 +34,17 @@ signature, expiry, issuer, and audience before the server finds or creates the u
 and returns an application JWT and cookie. Token verification fetches Google's
 public keys and requires network access. This flow does not check token revocation;
 adding revocation checks requires Firebase Admin credentials. Never log ID or refresh tokens.
+
+### Render deployment
+
+Local `.env` files are ignored by Git and are not deployed. Set `MONGODB_URI`,
+`JWT_SECRET`, `FIREBASE_PROJECT_ID`, and `CORS_ORIGIN` in the Render backend
+service's Environment settings, then restart/redeploy. The Firebase project must
+match the deployed frontend's `VITE_FIREBASE_PROJECT_ID` (currently `years-goal`
+in `client/env.example`). Set `CORS_ORIGIN` to the frontend origin
+(`https://yeargoals.onrender.com`). Frontend `VITE_` changes require a rebuild.
+
+For a Google login 500, find the response's `requestId` in backend logs.
+`auth/missing-project-id` identifies missing backend Firebase configuration. The
+last logged stage distinguishes verification from database/session failures.
+Never share tokens or database connection strings in bug reports.

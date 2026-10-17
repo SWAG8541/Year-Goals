@@ -80,8 +80,17 @@ export class AuthController {
       const status = error instanceof AuthError ? error.status : error instanceof z.ZodError ? 400 : 500;
       // Log categories only: raw database errors can contain personal data.
       trace(`Login failed: type=${error instanceof Error ? error.name : 'Unknown'}, status=${status}, duration=${Date.now() - startedAt}ms`);
+      if (error instanceof Error && 'code' in error) {
+        const code = String(error.code);
+        if (/^(?:auth\/[a-z-]+|app\/[a-z-]+|\d+)$/.test(code)) {
+          trace(`Login failure code=${code}`);
+        }
+        if (code === 'auth/missing-project-id') {
+          trace('Set FIREBASE_PROJECT_ID in the backend service environment to match the frontend Firebase project, then restart');
+        }
+      }
       if (status === 500) {
-        res.status(500).json({ message: 'Google login failed' });
+        res.status(500).json({ message: 'Google login failed', requestId });
       } else {
         handleAuthError(error, res, 'Google login failed');
       }
