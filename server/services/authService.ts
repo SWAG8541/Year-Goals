@@ -64,6 +64,14 @@ export class AuthService {
       identity = await auth.verifyIdToken(data.idToken);
     } catch (error) {
       const code = error instanceof Error && 'code' in error ? String(error.code) : '';
+
+       trace(`Firebase verifyIdToken failed: code=${code}`);
+
+        if (error instanceof Error) {
+    trace(`Firebase verifyIdToken failed: message=${error.message}`);
+  }
+
+  
       if (['auth/argument-error', 'auth/invalid-id-token', 'auth/id-token-expired',
         'auth/id-token-revoked', 'auth/user-disabled'].includes(code)) {
         throw new AuthError(401, 'Invalid or expired Google sign-in token');
