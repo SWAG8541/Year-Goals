@@ -21,6 +21,6 @@ export const env = {
   mongodbUri: required('MONGODB_URI'),
   jwtSecret: required('JWT_SECRET'),
   firebaseProjectId: process.env.FIREBASE_PROJECT_ID?.trim(),
-  corsOrigin: process.env.CORS_ORIGIN ,
+  corsOrigin: 'https://yeargoals.onrender.com' ,
   
 };
