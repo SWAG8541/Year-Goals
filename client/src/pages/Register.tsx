@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { signInWithGoogle } from "../firebase/auth";
 
 export default function Register() {
   const [, setLocation] = useLocation();
@@ -54,6 +55,30 @@ export default function Register() {
     }
   };
 
+    const handleGoogleLogin = async (): Promise<void> => {
+      setIsLoading(true);
+      try {
+        const { idToken } = await signInWithGoogle();
+        const res = await fetch(apiUrl("/api/auth/google"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ idToken }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Google login failed");
+        if (typeof data.token !== "string" || !data.token) throw new Error("Missing application session token");
+        localStorage.setItem("token", data.token);
+        toast({ title: "Welcome!", description: "You've successfully signed in with Google." });
+        window.location.href = "/";
+      } catch (error) {
+        toast({ title: "Google sign-in failed", variant: "destructive",
+          description: error instanceof Error ? error.message : "Please try again." });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
       <Card className="w-full max-w-md">
@@ -68,7 +93,7 @@ export default function Register() {
                 <Label htmlFor="firstName">First Name</Label>
                 <Input
                   id="firstName"
-                  placeholder="John"
+                  placeholder="Suraj"
                   value={formData.firstName}
                   onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                 />
@@ -77,7 +102,7 @@ export default function Register() {
                 <Label htmlFor="lastName">Last Name</Label>
                 <Input
                   id="lastName"
-                  placeholder="Doe"
+                  placeholder="Patil"
                   value={formData.lastName}
                   onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                 />
@@ -94,7 +119,7 @@ export default function Register() {
                 required
               />
             </div>
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="phone">Phone Number (with country code)</Label>
               <Input
                 id="phone"
@@ -105,7 +130,7 @@ export default function Register() {
                 required
               />
               <p className="text-xs text-muted-foreground">Required for WhatsApp notifications</p>
-            </div>
+            </div> */}
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input
@@ -119,6 +144,10 @@ export default function Register() {
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Creating account..." : "Create Account"}
+            </Button>
+
+            <Button type="button" className="w-full" disabled={isLoading} onClick={handleGoogleLogin}>
+                Continue with Google
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
